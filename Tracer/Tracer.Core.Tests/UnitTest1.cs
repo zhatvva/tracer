@@ -7,7 +7,7 @@ namespace Tracer.Core.Tests
         [Fact]
         public void Test1()
         {
-
+            
         }
     }
 }

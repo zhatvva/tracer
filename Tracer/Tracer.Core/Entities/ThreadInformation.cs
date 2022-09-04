@@ -4,10 +4,11 @@ namespace Tracer.Core.Entities
 {
     internal class ThreadInformation : IThreadInformation
     {
-        public int Id => throw new NotImplementedException();
+        public int Id { get; internal set; }
 
-        public string Time => throw new NotImplementedException();
+        internal long TimeInMs { get; set; }
+        public string Time => $"{TimeInMs}ms";
 
-        public IReadOnlyList<IMethodInformation> Methods => throw new NotImplementedException();
+        public IReadOnlyList<IMethodInformation> Methods { get; internal set; }
     }
 }

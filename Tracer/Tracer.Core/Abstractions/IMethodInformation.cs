@@ -6,7 +6,7 @@
         
         public string Class { get; }
 
-        public string Time { get; }
+        public long TimeInMs { get; }
 
         public IReadOnlyList<IMethodInformation> Methods { get; }
     }

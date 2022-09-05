@@ -29,7 +29,6 @@ namespace Tracer.Core.Services
         public ITraceResult GetTraceResult()
         {
             var threads = _threads
-                .Where(p => p.Value.IsStopped)
                 .Select(p => p.Value.GetTraceResult())
                 .ToList()
                 .AsReadOnly();

@@ -5,8 +5,6 @@ namespace Tracer.Core.Services
 {
     internal class ThreadTracer
     {
-        internal bool IsStopped { get; private set; } = false;
-        
         private readonly ThreadInformation _threadInformation;
         
         private readonly Stack<MethodTracer> _methodTracers = new();
@@ -35,28 +33,13 @@ namespace Tracer.Core.Services
         {
             lock (_methodTracers)
             {
-                if (_methodTracers.TryPop(out var methodTracer))
-                {
-                    methodTracer.StopTrace();
-                    var methodInformation = methodTracer.GetTraceResult();
-                    if (_methodTracers.TryPeek(out var previousTracer))
-                    {
-                        previousTracer.AttachMethodInformation(methodInformation);
-                    }
-                    else
-                    {
-                        lock (_methodInformations)
-                        {
-                            _methodInformations.Add(methodInformation);
-                        }
-                    }
-                }
+                PopMethodTracer();
             }
-            IsStopped = true;
         }
 
         public ThreadInformation GetTraceResult()
         {
+            CleanUpMethodTracersStack();
             lock (_methodInformations)
             {
                 _threadInformation.TimeInMs = _methodInformations.Sum(m => m.TimeInMs);
@@ -64,6 +47,37 @@ namespace Tracer.Core.Services
             }
 
             return _threadInformation;
+        }
+
+        private void CleanUpMethodTracersStack()
+        {
+            lock (_methodTracers)
+            {
+                while (_methodTracers.Count > 0)
+                {
+                    PopMethodTracer();
+                }
+            }
+        }
+
+        private void PopMethodTracer()
+        {
+            if (_methodTracers.TryPop(out var methodTracer))
+            {
+                methodTracer.StopTrace();
+                var methodInformation = methodTracer.GetTraceResult();
+                if (_methodTracers.TryPeek(out var previousTracer))
+                {
+                    previousTracer.AttachMethodInformation(methodInformation);
+                }
+                else
+                {
+                    lock (_methodInformations)
+                    {
+                        _methodInformations.Add(methodInformation);
+                    }
+                }
+            }
         }
     }
 }

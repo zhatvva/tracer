@@ -6,8 +6,7 @@ namespace Tracer.Core.Entities
     {
         public int Id { get; internal set; }
 
-        internal long TimeInMs { get; set; }
-        public string Time => $"{TimeInMs}ms";
+        public long TimeInMs { get; internal set; }
 
         public IReadOnlyList<IMethodInformation> Methods { get; internal set; }
     }

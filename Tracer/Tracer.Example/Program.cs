@@ -5,10 +5,10 @@ using System.Text.Json;
 public class HelloWorld
 {
     public static async Task Main(string[] args)
-    {
+    { 
         var tracer = new TracerService();
-        var foo = new Foo(tracer);
-        await foo.MyMethod();
+        var foo = new Foo(tracer); 
+        foo.MyMethod();
         var result = tracer.GetTraceResult();
         var options = new JsonSerializerOptions()
         {
@@ -31,13 +31,15 @@ public class Foo
         _bar = new Bar(_tracer);
     }
 
-    public async Task MyMethod()
+    public void MyMethod()
     {
         _tracer.StartTrace();
+        Console.WriteLine(Environment.CurrentManagedThreadId);
         Thread.Sleep(100);
         var task = Task.Run(_bar.M1);
         _bar.M2();
-        await task;
+        task.Wait();
+        Console.WriteLine(Environment.CurrentManagedThreadId);
         _tracer.StopTrace();
     }
 }

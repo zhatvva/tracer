@@ -1,22 +1,35 @@
 ﻿using Tracer.Core.Services;
 using Tracer.Core.Abstractions;
 using System.Text.Json;
+using System.Reflection;
+using Tracer.Serialization.Abstractions;
 
-public class HelloWorld
+public class Program
 {
     public static async Task Main(string[] args)
-    { 
+    {
         var tracer = new TracerService();
         var foo = new Foo(tracer); 
+        var task = Task.Run(foo.MyMethod);
         foo.MyMethod();
+        task.Wait();
         var result = tracer.GetTraceResult();
-        var options = new JsonSerializerOptions()
+    
+        foreach (var filePath in Directory.EnumerateFiles("SerializerPlugins", "*.dll"))
         {
-            WriteIndented = true
-        };
-        var json = JsonSerializer.Serialize(result, options);
-        Console.WriteLine(json);
-        Console.ReadLine();
+            var assembly = Assembly.LoadFrom(filePath);
+            
+            var serializerNamespace = filePath.Split('\\')[1];
+            serializerNamespace = serializerNamespace[..serializerNamespace.LastIndexOf('.')];
+            var serializerTypeName = serializerNamespace.Split('.')[2];
+            var fullName = $"{serializerNamespace}.Core.{serializerTypeName}TraceResultSerializer";
+
+            var serializerType = assembly.GetType(fullName) ?? throw new TypeLoadException(fullName);
+            var serializer = (ITraceResultSerializer)(Activator.CreateInstance(serializerType) ?? throw new TypeLoadException(fullName));
+            
+            using var stream = new FileStream($"serialize_result.{serializerTypeName.ToLower()}", FileMode.Create);
+            serializer.Serialize(result, stream);
+        }
     }
 }
 
@@ -34,12 +47,9 @@ public class Foo
     public void MyMethod()
     {
         _tracer.StartTrace();
-        Console.WriteLine(Environment.CurrentManagedThreadId);
         Thread.Sleep(100);
-        var task = Task.Run(_bar.M1);
+        _bar.M1();
         _bar.M2();
-        task.Wait();
-        Console.WriteLine(Environment.CurrentManagedThreadId);
         _tracer.StopTrace();
     }
 }

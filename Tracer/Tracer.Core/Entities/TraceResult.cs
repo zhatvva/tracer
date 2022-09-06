@@ -6,14 +6,14 @@ namespace Tracer.Core.Entities
     {
         public IReadOnlyList<IThreadInformation> Threads { get; init; }
 
-        public TraceResult(IReadOnlyList<ThreadInformation> threads)
+        public TraceResult(List<ThreadInformation> threads)
         {
             if (threads is null)
             {
                 throw new ArgumentNullException(nameof(threads));
             }
 
-            Threads = threads;
+            Threads = threads.AsReadOnly();
         }
     }
 }

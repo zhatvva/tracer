@@ -30,8 +30,7 @@ namespace Tracer.Core.Services
         {
             var threads = _threads
                 .Select(p => p.Value.GetTraceResult())
-                .ToList()
-                .AsReadOnly();
+                .ToList();
 
             var traceResult = new TraceResult(threads);
             return traceResult;

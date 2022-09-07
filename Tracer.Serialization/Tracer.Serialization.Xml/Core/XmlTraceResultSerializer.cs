@@ -10,8 +10,7 @@ namespace Tracer.Serialization.Xml.Core
         public void Serialize(ITraceResult traceResult, Stream to)
         {
             var serializer = new XmlSerializer(typeof(TraceResultOutputModel));
-            var model = new TraceResultOutputModel();
-            model.SetValues(traceResult);
+            var model = new TraceResultOutputModel(traceResult);
             serializer.Serialize(to, model);
         }
     }

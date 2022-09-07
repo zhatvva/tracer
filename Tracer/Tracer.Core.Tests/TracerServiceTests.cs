@@ -58,24 +58,24 @@ namespace Tracer.Core.Tests
             Assert.Equal(1, result.Threads[0].Methods.Count);
             Assert.Equal(1, result.Threads[1].Methods.Count);
             Assert.NotNull(result.Threads[0].Methods[0].Methods);
-            Assert.Equal(1, result.Threads[0].Methods[0].Methods.Count);
+            Assert.Equal(0, result.Threads[0].Methods[0].Methods.Count);
             Assert.NotNull(result.Threads[1].Methods[0].Methods);
-            Assert.Equal(0, result.Threads[1].Methods[0].Methods.Count);
-            Assert.NotNull(result.Threads[0].Methods[0].Methods[0].Methods);
-            Assert.Equal(0, result.Threads[0].Methods[0].Methods[0].Methods.Count);
+            Assert.Equal(1, result.Threads[1].Methods[0].Methods.Count);
+            Assert.NotNull(result.Threads[1].Methods[0].Methods[0].Methods);
+            Assert.Equal(0, result.Threads[1].Methods[0].Methods[0].Methods.Count);
 
-            Assert.Equal("MyMethod", result.Threads[0].Methods[0].Name);
-            Assert.Equal("FooMultipleThreads", result.Threads[0].Methods[0].Class);
-            Assert.Equal("M2", result.Threads[0].Methods[0].Methods[0].Name);
-            Assert.Equal("BarMultipleThreads", result.Threads[0].Methods[0].Methods[0].Class);
             Assert.Equal("M1", result.Threads[0].Methods[0].Name);
             Assert.Equal("BarMultipleThreads", result.Threads[0].Methods[0].Class);
+            Assert.Equal("MyMethod", result.Threads[1].Methods[0].Name);
+            Assert.Equal("FooMultipleThreads", result.Threads[1].Methods[0].Class);
+            Assert.Equal("M2", result.Threads[1].Methods[0].Methods[0].Name);
+            Assert.Equal("BarMultipleThreads", result.Threads[1].Methods[0].Methods[0].Class);
 
-            Assert.True(result.Threads[0].TimeInMs >= 170);
-            Assert.True(result.Threads[0].Methods[0].TimeInMs >= 170);
-            Assert.True(result.Threads[0].Methods[0].Methods[0].TimeInMs >= 70);
-            Assert.True(result.Threads[1].TimeInMs >= 100);
-            Assert.True(result.Threads[1].Methods[0].TimeInMs >= 100);
+            Assert.True(result.Threads[1].TimeInMs >= 170);
+            Assert.True(result.Threads[1].Methods[0].TimeInMs >= 170);
+            Assert.True(result.Threads[1].Methods[0].Methods[0].TimeInMs >= 70);
+            Assert.True(result.Threads[0].TimeInMs >= 100);
+            Assert.True(result.Threads[0].Methods[0].TimeInMs >= 100);
         }
     }
 }

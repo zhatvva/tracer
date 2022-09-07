@@ -1,6 +1,6 @@
 ﻿using Tracer.Core.Abstractions;
 
-namespace Tracer.Serialization.Xml.Models
+namespace Tracer.Serialization.Json.Models
 {
     public class TraceResultOutputModel
     {

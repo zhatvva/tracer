@@ -22,45 +22,11 @@ namespace Tracer.Core.Services
         public void StartTrace(StackFrame frame)
         {
             var methodTracer = new MethodTracer();
-            lock (_methodTracers)
-            {
-                _methodTracers.Push(methodTracer);
-            }
+            _methodTracers.Push(methodTracer);
             methodTracer.StartTrace(frame);
         }
 
         public void StopTrace()
-        {
-            lock (_methodTracers)
-            {
-                PopMethodTracer();
-            }
-        }
-
-        public ThreadInformation GetTraceResult()
-        {
-            CleanUpMethodTracersStack();
-            lock (_methodInformations)
-            {
-                _threadInformation.TimeInMs = _methodInformations.Sum(m => m.TimeInMs);
-                _threadInformation.Methods = _methodInformations;
-            }
-
-            return _threadInformation;
-        }
-
-        private void CleanUpMethodTracersStack()
-        {
-            lock (_methodTracers)
-            {
-                while (_methodTracers.Count > 0)
-                {
-                    PopMethodTracer();
-                }
-            }
-        }
-
-        private void PopMethodTracer()
         {
             if (_methodTracers.TryPop(out var methodTracer))
             {
@@ -68,16 +34,21 @@ namespace Tracer.Core.Services
                 var methodInformation = methodTracer.GetTraceResult();
                 if (_methodTracers.TryPeek(out var previousTracer))
                 {
-                    previousTracer.AttachMethodInformation(methodInformation);
+                    previousTracer.AddMethodInformation(methodInformation);
                 }
                 else
                 {
-                    lock (_methodInformations)
-                    {
-                        _methodInformations.Add(methodInformation);
-                    }
+                    _methodInformations.Add(methodInformation);
                 }
             }
+        }
+
+        public ThreadInformation GetTraceResult()
+        {
+            _threadInformation.TimeInMs = _methodInformations.Sum(m => m.TimeInMs);
+            _threadInformation.Methods = _methodInformations;
+
+            return _threadInformation;
         }
     }
 }

@@ -9,12 +9,9 @@ namespace Tracer.Core.Services
 
         private readonly MethodInformation _information = new();
 
-        public void AttachMethodInformation(MethodInformation information)
+        public void AddMethodInformation(MethodInformation information)
         {
-            lock (_information.MethodsInternal)
-            {
-                _information.MethodsInternal.Add(information);
-            }
+            _information.MethodsInternal.Add(information);
         }
 
         public void StartTrace(StackFrame frame)

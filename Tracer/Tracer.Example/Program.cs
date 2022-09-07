@@ -6,13 +6,11 @@ using Tracer.Serialization.Abstractions;
 
 public class Program
 {
-    public static async Task Main(string[] args)
+    public static void Main(string[] args)
     {
         var tracer = new TracerService();
-        var foo = new Foo(tracer); 
-        var task = Task.Run(foo.MyMethod);
+        var foo = new FooMultipleThreads(tracer); 
         foo.MyMethod();
-        task.Wait();
         var result = tracer.GetTraceResult();
     
         foreach (var filePath in Directory.EnumerateFiles("SerializerPlugins", "*.dll"))
@@ -74,6 +72,52 @@ public class Bar
     {
         _tracer.StartTrace();
         Thread.Sleep(70);
+        _tracer.StopTrace();
+    }
+}
+
+internal class BarMultipleThreads
+{
+    private readonly ITracer _tracer;
+
+    public BarMultipleThreads(ITracer tracer)
+    {
+        _tracer = tracer;
+    }
+
+    public void M1()
+    {
+        _tracer.StartTrace();
+        Thread.Sleep(100);
+        _tracer.StopTrace();
+    }
+
+    public void M2()
+    {
+        _tracer.StartTrace();
+        Thread.Sleep(70);
+        _tracer.StopTrace();
+    }
+}
+
+internal class FooMultipleThreads
+{
+    private readonly BarMultipleThreads _bar;
+    private readonly ITracer _tracer;
+
+    internal FooMultipleThreads(ITracer tracer)
+    {
+        _tracer = tracer;
+        _bar = new BarMultipleThreads(_tracer);
+    }
+
+    public void MyMethod()
+    {
+        _tracer.StartTrace();
+        Thread.Sleep(100);
+        var task = Task.Run(_bar.M1);
+        _bar.M2();
+        task.Wait();
         _tracer.StopTrace();
     }
 }

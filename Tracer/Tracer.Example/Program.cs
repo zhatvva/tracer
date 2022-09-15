@@ -31,51 +31,6 @@ public class Program
     }
 }
 
-public class Foo
-{
-    private Bar _bar;
-    private ITracer _tracer;
-
-    internal Foo(ITracer tracer)
-    {
-        _tracer = tracer;
-        _bar = new Bar(_tracer);
-    }
-
-    public void MyMethod()
-    {
-        _tracer.StartTrace();
-        Thread.Sleep(100);
-        _bar.M1();
-        _bar.M2();
-        _tracer.StopTrace();
-    }
-}
-
-public class Bar
-{
-    private ITracer _tracer;
-
-    internal Bar(ITracer tracer)
-    {
-        _tracer = tracer;
-    }
-
-    public void M1()
-    {
-        _tracer.StartTrace();
-        Thread.Sleep(100);
-        _tracer.StopTrace();
-    }
-
-    public void M2()
-    {
-        _tracer.StartTrace();
-        Thread.Sleep(70);
-        _tracer.StopTrace();
-    }
-}
-
 internal class BarMultipleThreads
 {
     private readonly ITracer _tracer;

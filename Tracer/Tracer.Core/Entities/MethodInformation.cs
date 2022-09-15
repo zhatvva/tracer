@@ -10,7 +10,7 @@ namespace Tracer.Core.Entities
         
         public long TimeInMs { get; internal set; }
         
-        internal List<MethodInformation> MethodsInternal { get; } = new();
+        public List<MethodInformation> MethodsInternal { get; } = new();
         public IReadOnlyList<IMethodInformation> Methods => MethodsInternal.AsReadOnly();
     }
 }

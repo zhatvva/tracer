@@ -10,11 +10,6 @@ namespace Tracer.Serialization.Json.Models
 
         public List<MethodInformationOutputModel> Methods { get; set; }
 
-        public ThreadInformationOutputModel()
-        {
-            
-        }
-
         public ThreadInformationOutputModel(IThreadInformation thread)
         {
             Id = thread.Id;

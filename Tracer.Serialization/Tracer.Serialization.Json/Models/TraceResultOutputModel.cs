@@ -6,11 +6,6 @@ namespace Tracer.Serialization.Json.Models
     {
         public List<ThreadInformationOutputModel> Threads { get; set; }
 
-        public TraceResultOutputModel()
-        {
-
-        }
-
         public TraceResultOutputModel(ITraceResult result)
         {
             Threads = new(result.Threads.Count);

@@ -12,11 +12,6 @@ namespace Tracer.Serialization.Json.Models
 
         public List<MethodInformationOutputModel> Methods { get; set; }
 
-        public MethodInformationOutputModel()
-        {
-            
-        }
-
         public MethodInformationOutputModel(IMethodInformation method)
         {
             Name = method.Name;
